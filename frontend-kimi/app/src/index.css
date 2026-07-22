@@ -1,0 +1,1056 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   CUSTODY PASSPORT — DESIGN TOKENS
+   Extracted from the approved Framer direction.
+   Restrained gray / green / red operational-document system.
+   ============================================================ */
+:root {
+  /* Surfaces */
+  --surface-app: #e3e7e6;        /* page gray */
+  --surface-panel: #d4d9d8;      /* recessed panel */
+  --surface-doc: #f7f5ef;        /* sheet interior (warm off-white) */
+  --surface-paper: #fcfbf7;      /* raised paper */
+  --surface-band: #181813;       /* sheet status band (near-black) */
+
+  /* Ink */
+  --ink: #1c1c18;
+  --ink-soft: #45453f;
+  --ink-mute: #6f6f66;
+  --ink-on-band: #e8e6dd;
+
+  /* Lines */
+  --line: #c6cac3;
+  --line-strong: #9ba097;
+  --line-spine: #b3b8b1;
+
+  /* State: open / pending (olive label, neutral body) */
+  --pending-label: #8a8757;
+  --pending-ink: #6e6c43;
+
+  /* State: accepted / locked / imprint (green) */
+  --green: #2e6b4c;
+  --green-deep: #1f4d37;
+  --green-tint: #e9f1ea;
+  --green-line: #2e6b4c;
+
+  /* State: expired / exception (red) */
+  --red: #9c3a28;
+  --red-deep: #7c2b1d;
+  --red-tint: #f6e3dd;
+  --red-line: #8e2f22;
+
+  /* Interaction */
+  --focus-ring: #1c1c18;
+  --disabled-bg: #d8d9d2;
+  --disabled-ink: #8b8b82;
+
+  /* Typography */
+  --font-label: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Document metrics */
+  --doc-max: 1120px;
+  --sheet-max: 760px;
+  --radius: 2px; /* operational documents are nearly square — no pills */
+
+  /* Motion */
+  --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--surface-app);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+::selection {
+  background: var(--green-tint);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 1px;
+}
+
+/* ============================================================
+   LABEL TYPOGRAPHY
+   Condensed uppercase — short labels, states, identifiers ONLY.
+   ============================================================ */
+.label {
+  font-family: var(--font-label);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+}
+
+.label--section {
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.label--band {
+  font-size: 14px;
+  letter-spacing: 0.1em;
+}
+
+.label--state {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.label--id {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+/* ============================================================
+   APP FRAME
+   ============================================================ */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  border-bottom: 1px solid var(--line-strong);
+  background: var(--surface-panel);
+  padding: 14px 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 28px;
+}
+
+.app-header__identity {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-right: auto;
+}
+
+.app-header__title {
+  font-size: 19px;
+  color: var(--ink);
+}
+
+.app-header__sub {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.app-main {
+  flex: 1;
+  width: 100%;
+  max-width: var(--doc-max);
+  margin: 0 auto;
+  padding: 28px 24px 72px;
+}
+
+/* Role switcher — demonstration only */
+.role-switcher {
+  display: flex;
+  border: 1px solid var(--line-strong);
+  background: var(--surface-doc);
+}
+
+.role-switcher__btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-soft);
+  border-right: 1px solid var(--line);
+}
+
+.role-switcher__btn:last-child {
+  border-right: none;
+}
+
+.role-switcher__btn[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--ink-on-band);
+}
+
+.role-switcher__btn:hover:not([aria-pressed='true']) {
+  background: var(--surface-panel);
+}
+
+/* Demo controls — demonstration only */
+.demo-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.demo-controls__note {
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+
+.demo-zone {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  padding: 6px 12px;
+  border: 1px dashed var(--line-strong);
+  background: var(--surface-panel);
+  max-width: 100%;
+}
+
+.demo-zone__label {
+  font-size: 11px;
+  color: var(--ink-mute);
+  letter-spacing: 0.08em;
+}
+
+/* Synthetic photo evidence proof */
+.photo-proof {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0 0 26px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface-paper);
+}
+
+.photo-proof__thumb {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #d7dbd3, #b9c0b4);
+  border: 1px solid var(--line-strong);
+}
+
+.photo-proof__meta {
+  font-size: 12px;
+  color: var(--ink-mute);
+  line-height: 1.4;
+}
+
+.photo-proof__meta strong {
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.btn {
+  appearance: none;
+  cursor: pointer;
+  border: 1px solid var(--ink);
+  background: var(--surface-paper);
+  color: var(--ink);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  padding: 8px 14px;
+  border-radius: var(--radius);
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--surface-panel);
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  border-color: var(--line-strong);
+  background: var(--disabled-bg);
+  color: var(--disabled-ink);
+}
+
+.btn--primary {
+  background: var(--ink);
+  color: var(--ink-on-band);
+  border-color: var(--ink);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: #33332c;
+}
+
+.btn--danger {
+  background: var(--red);
+  border-color: var(--red-deep);
+  color: #fdf3f0;
+}
+
+.btn--danger:hover:not(:disabled) {
+  background: var(--red-deep);
+}
+
+.btn--secondary {
+  background: transparent;
+  border-color: var(--line-strong);
+  color: var(--ink-soft);
+  font-size: 12px;
+  padding: 7px 12px;
+}
+
+.btn--secondary:hover:not(:disabled) {
+  background: var(--surface-panel);
+  color: var(--ink);
+}
+
+.btn--block {
+  width: 100%;
+  padding: 13px 16px;
+  font-size: 15px;
+}
+
+/* ============================================================
+   PASSPORT DOCUMENT — cumulative sheets on a shared spine
+   ============================================================ */
+.passport {
+  position: relative;
+  max-width: var(--sheet-max);
+}
+
+/* The shared document spine */
+.passport::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--line-spine);
+}
+
+.passport__dochead {
+  padding: 0 0 18px 32px;
+}
+
+.passport__dochead h1 {
+  margin: 4px 0 4px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.passport__dochead p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+/* Each sheet hangs on the spine */
+.sheet {
+  position: relative;
+  margin: 0 0 26px 32px;
+  background: var(--surface-doc);
+  border: 1px solid var(--line-strong);
+}
+
+/* Spine node */
+.sheet::before {
+  content: '';
+  position: absolute;
+  left: -32px;
+  top: 22px;
+  width: 10px;
+  height: 10px;
+  margin-left: -4px;
+  background: var(--surface-app);
+  border: 2px solid var(--line-strong);
+  border-radius: 50%;
+}
+
+.sheet--locked::before {
+  background: var(--green);
+  border-color: var(--green-deep);
+}
+
+.sheet--open::before {
+  background: var(--surface-doc);
+  border-color: var(--pending-ink);
+}
+
+.sheet--expired::before {
+  background: var(--red);
+  border-color: var(--red-deep);
+}
+
+/* Sheet status band */
+.sheet__band {
+  background: var(--surface-band);
+  color: var(--ink-on-band);
+  padding: 9px 16px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sheet__band-kind {
+  color: #a9a98f;
+}
+
+.sheet--locked .sheet__band-kind {
+  color: #9fc4ae;
+}
+
+.sheet--expired .sheet__band-kind {
+  color: #d9a295;
+}
+
+.sheet__body {
+  padding: 18px 20px 20px;
+}
+
+/* OPEN sheet: dashed boundary signals incomplete, editable perimeter */
+.sheet--open .sheet__body {
+  border: 1px dashed var(--line-strong);
+  margin: 10px;
+  background: var(--surface-paper);
+}
+
+.sheet--open {
+  transition: border-color 400ms var(--ease-settle);
+}
+
+/* EXPIRED sheet: red boundary + tinted body */
+.sheet--expired {
+  border-color: var(--red-line);
+}
+
+.sheet--expired .sheet__body {
+  background: var(--red-tint);
+}
+
+/* LOCKED sheet: solid boundary, quiet interior */
+.sheet--locked {
+  border-color: var(--line-strong);
+}
+
+.sheet__state {
+  margin: 0 0 10px;
+}
+
+.sheet--open .sheet__state {
+  color: var(--pending-ink);
+}
+
+.sheet--locked .sheet__state {
+  color: var(--green-deep);
+}
+
+.sheet--expired .sheet__state {
+  color: var(--red-deep);
+}
+
+.sheet__lede {
+  margin: 0 0 16px;
+  font-size: 15px;
+  font-weight: 600;
+  max-width: 52ch;
+}
+
+/* Party block */
+.party {
+  border: 1px solid var(--line);
+  background: var(--surface-paper);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+
+.party__role {
+  font-size: 13px;
+  color: var(--ink-mute);
+  margin-bottom: 4px;
+}
+
+.party__name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.party__org {
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+/* ============================================================
+   VERIFICATION CHECKLIST
+   ============================================================ */
+.checklist {
+  border: 1px solid var(--line);
+  background: var(--surface-paper);
+  margin-bottom: 14px;
+}
+
+.checklist__head {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.checklist__count {
+  color: var(--ink-mute);
+  font-size: 13px;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+}
+
+.check:last-child {
+  border-bottom: none;
+}
+
+.check:hover {
+  background: var(--surface-doc);
+}
+
+.check input[type='checkbox'] {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: var(--green);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.check__text {
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+}
+
+.check input:checked ~ .check__text {
+  color: var(--green-deep);
+}
+
+/* Condition selection — segmented radio control (square, no pills) */
+.check--condition {
+  cursor: default;
+  flex-wrap: wrap;
+}
+
+.condition-options {
+  display: flex;
+  border: 1px solid var(--line-strong);
+  margin-left: auto;
+}
+
+.condition-option {
+  position: relative;
+  cursor: pointer;
+}
+
+.condition-option input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+
+.condition-option span {
+  display: block;
+  padding: 6px 12px;
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: 13.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  border-right: 1px solid var(--line);
+  background: var(--surface-paper);
+}
+
+.condition-option:last-child span {
+  border-right: none;
+}
+
+.condition-option input:checked + span {
+  background: var(--ink);
+  color: var(--ink-on-band);
+}
+
+.condition-option input:focus-visible + span {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.condition-option input:disabled + span {
+  color: var(--disabled-ink);
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   TRANSFER IMPRINT — permanent, green, settles once
+   ============================================================ */
+.imprint {
+  border: 1px solid var(--green-line);
+  border-left-width: 4px;
+  background: var(--green-tint);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+
+.imprint__title {
+  color: var(--green-deep);
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+.imprint__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 4px 16px;
+  font-size: 13.5px;
+  color: var(--green-deep);
+}
+
+.imprint__grid dt {
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--green);
+}
+
+.imprint__grid dd {
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+/* Imprint settling sequence — consequential, irreversible, restrained.
+   No confetti, bounce, glow or celebration. */
+.imprint--settling {
+  animation: imprint-settle 1.5s var(--ease-settle) both;
+}
+
+@keyframes imprint-settle {
+  0% {
+    opacity: 0;
+    transform: translateY(-6px);
+    border-left-width: 1px;
+  }
+  55% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    border-left-width: 4px;
+  }
+}
+
+/* Status band crossfade during settle */
+.sheet--settling .sheet__band {
+  animation: band-lock 1.5s var(--ease-settle) both;
+}
+
+@keyframes band-lock {
+  0%,
+  60% {
+    background: var(--surface-band);
+  }
+  100% {
+    background: var(--green-deep);
+  }
+}
+
+/* Custody summary update pulse — single, quiet */
+.summary--updated {
+  animation: summary-confirm 900ms var(--ease-settle) 1;
+}
+
+@keyframes summary-confirm {
+  0% {
+    background: var(--green-tint);
+  }
+  100% {
+    background: var(--surface-paper);
+  }
+}
+
+/* Accepting progress state on the button */
+.btn--accepting {
+  cursor: wait;
+}
+
+/* ============================================================
+   EXCEPTION RECORD
+   ============================================================ */
+.exception__headline {
+  color: var(--red-deep);
+  margin: 0 0 12px;
+}
+
+.exception__facts {
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+  font-size: 14.5px;
+  color: var(--ink);
+}
+
+.exception__facts li {
+  padding: 3px 0;
+}
+
+.exception__facts strong {
+  font-weight: 600;
+}
+
+.exception__action {
+  max-width: 320px;
+}
+
+.exception__assigned {
+  border: 1px solid var(--red-line);
+  background: var(--surface-paper);
+  padding: 12px 14px;
+  font-size: 14px;
+}
+
+.exception__assigned p {
+  margin: 0 0 4px;
+}
+
+.exception__note {
+  margin: 14px 0 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+  border-top: 1px solid var(--red-line);
+  padding-top: 10px;
+}
+
+/* ============================================================
+   CURRENT CUSTODIAN SUMMARY (side rail)
+   ============================================================ */
+.summary {
+  border: 1px solid var(--line-strong);
+  background: var(--surface-paper);
+  padding: 16px 18px;
+}
+
+.summary__label {
+  font-size: 13px;
+  color: var(--green-deep);
+  margin-bottom: 6px;
+}
+
+.summary__org {
+  margin: 0 0 6px;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.summary__meta {
+  margin: 0 0 14px;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+}
+
+.summary__load {
+  border: 1px solid var(--green-line);
+  background: var(--green-tint);
+  padding: 10px 12px;
+  display: grid;
+  gap: 2px;
+}
+
+.summary__load span {
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--green-deep);
+}
+
+/* Layout: document + rail on wide screens */
+.surface-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 32px;
+  align-items: start;
+}
+
+.surface-grid__rail {
+  position: sticky;
+  top: 24px;
+  display: grid;
+  gap: 18px;
+}
+
+.rail-block {
+  border: 1px solid var(--line);
+  background: var(--surface-panel);
+  padding: 14px 16px;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+}
+
+.rail-block h3 {
+  margin: 0 0 8px;
+}
+
+.rail-block ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.rail-block li {
+  padding: 2px 0;
+}
+
+.rail-block p {
+  margin: 10px 0 0;
+}
+
+/* ============================================================
+   DISPATCHER SURFACE
+   ============================================================ */
+.dispatcher-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 32px;
+  align-items: start;
+}
+
+.monitor {
+  border: 1px solid var(--line-strong);
+  background: var(--surface-paper);
+  padding: 16px 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.monitor__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+}
+
+.monitor__row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.monitor__key {
+  color: var(--ink-mute);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.monitor__val {
+  font-weight: 600;
+  text-align: right;
+}
+
+.monitor__val--open {
+  color: var(--pending-ink);
+}
+
+.monitor__val--locked {
+  color: var(--green-deep);
+}
+
+.monitor__val--expired {
+  color: var(--red-deep);
+}
+
+/* ============================================================
+   CUSTOMER PASSPORT (mobile-first)
+   ============================================================ */
+.customer-wrap {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.customer-doc {
+  border: 1px solid var(--line-strong);
+  background: var(--surface-doc);
+  padding: 18px 18px 22px;
+}
+
+.customer-doc .summary {
+  border: none;
+  background: transparent;
+  padding: 0 0 16px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 16px;
+}
+
+.history__title {
+  font-size: 13px;
+  color: var(--ink-mute);
+  margin-bottom: 10px;
+}
+
+.history__item {
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--line-strong);
+  background: var(--surface-paper);
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+
+.history__item--imprint {
+  border-left-color: var(--green-line);
+}
+
+.history__sheet {
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.history__meta {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+}
+
+.history__imprint-line {
+  font-size: 13px;
+  color: var(--green-deep);
+  font-weight: 600;
+}
+
+.customer-priority {
+  max-width: 420px;
+  margin: 22px auto 0;
+}
+
+/* Live region only visually hidden */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 960px) {
+  .surface-grid,
+  .dispatcher-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .surface-grid__rail {
+    position: static;
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-main {
+    padding: 20px 14px 56px;
+  }
+
+  .app-header {
+    padding: 12px 14px;
+    gap: 12px;
+  }
+
+  .passport__dochead {
+    padding-left: 24px;
+  }
+
+  .sheet {
+    margin-left: 24px;
+  }
+
+  .sheet::before {
+    left: -24px;
+  }
+
+  .passport::before {
+    left: 4px;
+  }
+
+  .sheet__body {
+    padding: 14px 14px 16px;
+  }
+
+  .check {
+    padding: 12px 12px; /* larger touch target */
+  }
+
+  body {
+    font-size: 15.5px; /* readable mobile type */
+  }
+}
+
+/* ============================================================
+   REDUCED MOTION — state changes remain instant and legible
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .imprint--settling,
+  .sheet--settling .sheet__band,
+  .summary--updated {
+    animation-duration: 1ms;
+    animation-delay: 0ms;
+  }
+
+  * {
+    transition-duration: 1ms !important;
+  }
+}
