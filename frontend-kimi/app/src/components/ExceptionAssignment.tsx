@@ -16,7 +16,7 @@ export function ExceptionAssignment() {
           <strong>Exception owner: {state.exceptionOwner}</strong>
         </p>
         <p>Next action: {EXCEPTION_NEXT_ACTION}.</p>
-        <p style={{ color: 'var(--ink-soft)' }}>
+        <p className="exception__custody-note">
           Custody unchanged — {SENDER.name} remains accountable.
         </p>
       </div>

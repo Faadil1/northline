@@ -9,11 +9,19 @@ import { useCustody } from '@/state/CustodyContext'
 export function CurrentCustodianSummary({ compact = false }: { compact?: boolean }) {
   const { state } = useCustody()
   const accepted = state.sheet02 === 'locked'
+  const expired = state.sheet02 === 'expired'
   const custodian = accepted ? RECEIVER : SENDER
+  const classes = [
+    'summary',
+    accepted ? 'summary--locked' : expired ? 'summary--expired' : 'summary--open',
+    accepted && state.imprintSettled ? 'summary--updated' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   return (
     <section
-      className={accepted && state.imprintSettled ? 'summary summary--updated' : 'summary'}
+      className={classes}
       aria-label="Current custodian"
     >
       <p className="label summary__label">Current custodian</p>

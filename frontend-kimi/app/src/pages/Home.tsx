@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react'
-import { CurrentCustodianSummary } from '@/components/CurrentCustodianSummary'
 import { CustomerPassportMobile } from '@/components/CustomerPassportMobile'
 import { DispatcherView } from '@/components/DispatcherView'
 import { PassportDocument } from '@/components/PassportDocument'
@@ -29,11 +28,10 @@ function LiveAnnouncer() {
 
 function ReceiverSurface({ isDemoMode }: { isDemoMode: boolean }) {
   return (
-    <div className="surface-grid">
+    <div className="receiver-main">
       <PassportDocument />
-      <div className="surface-grid__rail">
-        <CurrentCustodianSummary />
-        {isDemoMode && (
+      {isDemoMode && (
+        <div className="receiver-demo-info">
           <div className="rail-block">
             <h3 className="label label--section">Signature interaction — 8–12 second path</h3>
             <p style={{ margin: 0 }}>
@@ -42,8 +40,8 @@ function ReceiverSurface({ isDemoMode }: { isDemoMode: boolean }) {
               Sheet 02.
             </p>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }

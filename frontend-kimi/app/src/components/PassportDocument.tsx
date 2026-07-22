@@ -12,12 +12,12 @@ import { useCustody } from '@/state/CustodyContext'
  * Sheet 01 is permanent history. Sheet 02 carries the active handoff.
  */
 export function PassportDocument() {
-  const { state } = useCustody()
+  const { state, checksComplete } = useCustody()
 
   return (
     <div className="passport">
       <div className="passport__dochead">
-        <span className="label label--section" style={{ color: 'var(--ink-mute)' }}>
+        <span className="label label--section">
           Custody Passport — Move {SHIPMENT.move}
         </span>
         <h1>
@@ -37,12 +37,12 @@ export function PassportDocument() {
         statusText={state.sheet02 === 'locked' ? 'Historical — locked' : 'Sheet 01 — Locked'}
         kind={state.sheet02 === 'locked' ? 'Origin custody record' : 'Origin record'}
       >
-        <div className="party" style={{ marginBottom: 0 }}>
+        <div className="party party--history">
           <p className="label party__role">Custodian of record</p>
-          <p className="party__name" style={{ margin: 0 }}>
+          <p className="party__name">
             {SHEET_01.custodian}
           </p>
-          <p className="party__org" style={{ margin: 0 }}>
+          <p className="party__org">
             Accepted by {SHEET_01.acceptedBy}
           </p>
         </div>
@@ -53,22 +53,40 @@ export function PassportDocument() {
         <PassportSheet
           number={2}
           status="open"
-          statusText="Sheet 02 — Open / Incomplete"
+          statusText={checksComplete ? 'Sheet 02 — Ready' : 'Sheet 02 — Open / Incomplete'}
           kind="Acceptance / Interactive"
           settling={state.accepting}
+          ready={checksComplete && !state.accepting}
+          accepting={state.accepting}
         >
+          <div className="party party--current-custodian party--current-custodian--open">
+            <p className="label party__role">Current custodian</p>
+            <p className="party__name">
+              {SENDER.name}
+            </p>
+            <p className="party__org">
+              Accountable until {RECEIVER.name} accepts
+            </p>
+          </div>
           <p className="sheet__lede">
-            {SENDER.name} remains accountable until {RECEIVER.name} accepts custody.
+            {checksComplete
+              ? 'All evidence confirmed. Ready for acceptance.'
+              : 'Verification required before handoff can be accepted.'}
           </p>
           <div className="party">
             <p className="label party__role">Receiving operator</p>
-            <p className="party__name" style={{ margin: 0 }}>
+            <p className="party__name">
               {RECEIVER.operator}
             </p>
-            <p className="party__org" style={{ margin: 0 }}>
+            <p className="party__org">
               {RECEIVER.name}
             </p>
           </div>
+          {checksComplete && !state.accepting && (
+            <div className="imprint--reserved" aria-label="Imprint bed — reserved for acceptance">
+              <p className="imprint--reserved__label">Transfer Imprint — will appear here</p>
+            </div>
+          )}
           <VerificationChecklist />
           <AcceptanceAction />
         </PassportSheet>
@@ -76,16 +94,36 @@ export function PassportDocument() {
 
       {state.sheet02 === 'locked' && (
         <PassportSheet number={2} status="locked" statusText="Sheet 02 — Locked" kind="Transfer record">
+          <div className="party party--current-custodian party--current-custodian--locked">
+            <p className="label party__role">Current custodian</p>
+            <p className="party__name">
+              {RECEIVER.name}
+            </p>
+            <p className="party__org">
+              Accepted by {RECEIVER.operator}
+            </p>
+          </div>
           <TransferImprint acceptedAt={state.acceptedAt} settling />
-          <p style={{ margin: 0, fontSize: 14, color: 'var(--ink-soft)' }}>
-            {RECEIVER.name} is the active custodian. {SENDER.name} remains visible as the
-            historical custodian.
+          <p className="sheet__note">
+            {SENDER.name} remains visible as the historical custodian.
           </p>
         </PassportSheet>
       )}
 
       {state.sheet02 === 'expired' && (
-        <PassportSheet number={2} status="expired" statusText="Sheet 02 — Expired" kind="Expired handoff / Interactive">
+        <PassportSheet number={2} status="expired" statusText="Sheet 02 — Expired" kind="Expired handoff / Interactive" assigned={!!state.exceptionOwner}>
+          <div className="party party--current-custodian party--current-custodian--expired">
+            <p className="label party__role">Current custodian</p>
+            <p className="party__name">
+              {SENDER.name}
+            </p>
+            <p className="party__org">
+              Handoff not confirmed · remains accountable
+            </p>
+          </div>
+          <div className="imprint--void" aria-label="Imprint void — no acceptance occurred">
+            <p className="imprint--void__label">No Transfer Imprint · Handoff not completed</p>
+          </div>
           <ExceptionRecord />
           <ExceptionAssignment />
         </PassportSheet>

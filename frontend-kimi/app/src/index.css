@@ -446,13 +446,52 @@ body {
   transition: border-color 400ms var(--ease-settle);
 }
 
-/* EXPIRED sheet: red boundary + tinted body */
+/* READY sheet: all evidence complete, prepared but not accepting */
+.sheet--ready {
+  border-width: 2px;
+  border-color: var(--line-strong);
+}
+
+.sheet--ready .sheet__body {
+  border: 1px solid var(--line-spine);
+  margin: 10px;
+  background: var(--surface-paper);
+  padding: 18px 20px 20px;
+}
+
+.sheet--ready .sheet__state {
+  color: var(--ink);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+/* ACCEPTING sheet: registration begins, document settling */
+.sheet--accepting {
+  border-color: var(--line-strong);
+}
+
+.sheet--accepting .sheet__body {
+  padding: 16px 18px 18px;
+  border: 1px solid var(--line-strong);
+  margin: 8px;
+}
+
+/* EXPIRED sheet: red boundary, operational interior */
 .sheet--expired {
   border-color: var(--red-line);
 }
 
 .sheet--expired .sheet__body {
-  background: var(--red-tint);
+  background: var(--surface-paper);
+}
+
+/* EXCEPTION ASSIGNED sheet: same structure as expired */
+.sheet--assigned {
+  border-color: var(--red-line);
+}
+
+.sheet--assigned .sheet__body {
+  background: var(--surface-paper);
 }
 
 /* LOCKED sheet: solid boundary, quiet interior */
@@ -476,6 +515,10 @@ body {
   color: var(--red-deep);
 }
 
+.sheet--assigned .sheet__state {
+  color: var(--red-deep);
+}
+
 .sheet__lede {
   margin: 0 0 16px;
   font-size: 15px;
@@ -487,24 +530,71 @@ body {
 .party {
   border: 1px solid var(--line);
   background: var(--surface-paper);
-  padding: 12px 14px;
+  padding: 14px 16px;
   margin-bottom: 14px;
 }
 
 .party__role {
-  font-size: 13px;
+  font-size: 11.5px;
   color: var(--ink-mute);
-  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 600;
+  margin: 0 0 6px;
 }
 
 .party__name {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  margin: 0 0 2px;
 }
 
 .party__org {
   font-size: 14px;
   color: var(--ink-soft);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Party as current custodian in sheet context */
+.party--current-custodian {
+  margin-bottom: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.party--current-custodian .party__name {
+  font-size: 17px;
+}
+
+.party--current-custodian--locked {
+  border-top-color: var(--line);
+}
+
+.party--current-custodian--expired {
+  border-top-color: var(--red-line);
+}
+
+.party--current-custodian--open {
+  border-top-color: var(--line);
+}
+
+/* Preserve zero-margin state on history items */
+.party--history {
+  margin-bottom: 0;
+}
+
+/* Sheet note for historical context */
+.sheet__note {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+/* Document section label */
+.passport__dochead .label--section {
+  color: var(--ink-mute);
 }
 
 /* ============================================================
@@ -627,42 +717,50 @@ body {
 }
 
 /* ============================================================
-   TRANSFER IMPRINT — permanent, green, settles once
+   TRANSFER IMPRINT — permanent, operational, settles once
    ============================================================ */
 .imprint {
-  border: 1px solid var(--green-line);
-  border-left-width: 4px;
-  background: var(--green-tint);
-  padding: 12px 14px;
+  border: 2px solid var(--ink-mute);
+  border-left-width: 5px;
+  border-left-color: var(--ink);
+  background: var(--surface-paper);
+  padding: 14px 16px;
   margin-bottom: 14px;
+  position: relative;
+  box-shadow: inset -1px 0 0 var(--line);
 }
 
 .imprint__title {
-  color: var(--green-deep);
-  font-size: 15px;
-  margin-bottom: 6px;
+  color: var(--ink);
+  font-size: 14px;
+  margin-bottom: 8px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
 }
 
 .imprint__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 4px 16px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 6px 18px;
   font-size: 13.5px;
-  color: var(--green-deep);
+  color: var(--ink);
 }
 
 .imprint__grid dt {
   font-family: var(--font-label);
   font-weight: 600;
-  font-size: 12.5px;
+  font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--green);
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+  margin-bottom: 2px;
 }
 
 .imprint__grid dd {
-  margin: 0 0 6px;
+  margin: 0 0 4px;
   font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.005em;
 }
 
 /* Imprint settling sequence — consequential, irreversible, restrained.
@@ -674,17 +772,59 @@ body {
 @keyframes imprint-settle {
   0% {
     opacity: 0;
-    transform: translateY(-6px);
-    border-left-width: 1px;
+    transform: translateY(-4px) scaleX(0.99);
+    border-left-width: 2px;
   }
-  55% {
-    opacity: 1;
+  50% {
+    opacity: 0.85;
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
-    border-left-width: 4px;
+    transform: translateY(0) scaleX(1);
+    border-left-width: 5px;
   }
+}
+
+/* Reserved imprint bed — shows in READY state */
+.imprint--reserved {
+  border: 1px dashed var(--line-spine);
+  background: var(--surface-doc);
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Void interruption — shows in EXPIRED state */
+.imprint--void {
+  border: 2px solid var(--red-line);
+  border-style: dashed;
+  background: transparent;
+  padding: 18px 16px;
+  margin-bottom: 14px;
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imprint--reserved__label {
+  font-size: 12px;
+  color: var(--ink-mute);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.imprint--void__label {
+  font-size: 12px;
+  color: var(--red-deep);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
 }
 
 /* Status band crossfade during settle */
@@ -725,16 +865,18 @@ body {
    EXCEPTION RECORD
    ============================================================ */
 .exception__headline {
-  color: var(--red-deep);
+  color: var(--ink);
   margin: 0 0 12px;
+  font-weight: 600;
 }
 
 .exception__facts {
   margin: 0 0 16px;
   padding: 0;
   list-style: none;
-  font-size: 14.5px;
-  color: var(--ink);
+  font-size: 14px;
+  color: var(--ink-soft);
+  line-height: 1.5;
 }
 
 .exception__facts li {
@@ -750,14 +892,26 @@ body {
 }
 
 .exception__assigned {
-  border: 1px solid var(--red-line);
-  background: var(--surface-paper);
-  padding: 12px 14px;
-  font-size: 14px;
+  border-left: 2px solid var(--red-line);
+  background: transparent;
+  padding: 10px 0 10px 14px;
+  font-size: 13px;
+  color: var(--ink-soft);
 }
 
 .exception__assigned p {
-  margin: 0 0 4px;
+  margin: 0 0 3px;
+  line-height: 1.4;
+}
+
+.exception__assigned strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.exception__custody-note {
+  font-size: 12px;
+  color: var(--ink-mute);
 }
 
 .exception__note {
@@ -774,58 +928,107 @@ body {
 .summary {
   border: 1px solid var(--line-strong);
   background: var(--surface-paper);
-  padding: 16px 18px;
+  padding: 18px 20px;
+  border-top: 2px solid var(--line-strong);
 }
 
 .summary__label {
-  font-size: 13px;
-  color: var(--green-deep);
-  margin-bottom: 6px;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.summary--open .summary__label {
+  color: var(--pending-ink);
+}
+
+.summary--locked .summary__label {
+  color: var(--ink);
 }
 
 .summary__org {
-  margin: 0 0 6px;
-  font-size: 21px;
+  margin: 0 0 8px;
+  font-size: 24px;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.summary--locked .summary__org {
+  font-size: 26px;
+  margin-bottom: 10px;
 }
 
 .summary__meta {
-  margin: 0 0 14px;
-  font-size: 13.5px;
+  margin: 0 0 16px;
+  font-size: 13px;
   color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+.summary--locked .summary__meta {
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 18px;
 }
 
 .summary__load {
-  border: 1px solid var(--green-line);
-  background: var(--green-tint);
-  padding: 10px 12px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface-doc);
+  padding: 12px 14px;
   display: grid;
-  gap: 2px;
+  gap: 3px;
+  border-top: 1px solid var(--line);
+  margin-top: 6px;
 }
 
 .summary__load span {
   font-family: var(--font-label);
   font-weight: 600;
-  font-size: 14px;
+  font-size: 12.5px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--green-deep);
+  color: var(--ink-mute);
+  line-height: 1.3;
 }
 
-/* Layout: document + rail on wide screens */
-.surface-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
-  gap: 32px;
-  align-items: start;
+.summary--expired .summary__label {
+  color: var(--red-deep);
 }
 
-.surface-grid__rail {
-  position: sticky;
-  top: 24px;
-  display: grid;
-  gap: 18px;
+.summary--expired .summary__org {
+  font-size: 24px;
+}
+
+.summary--expired .summary__meta {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.summary--expired .summary__load {
+  border-color: var(--red-line);
+  background: var(--red-tint);
+}
+
+.summary--expired .summary__load span {
+  color: var(--red-deep);
+}
+
+/* Layout: centered document, no rail */
+.receiver-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.receiver-demo-info {
+  width: 100%;
+  max-width: 800px;
 }
 
 .rail-block {
@@ -919,10 +1122,19 @@ body {
   margin: 0 auto;
 }
 
+.customer-passport__title {
+  display: block;
+  margin-bottom: 12px;
+}
+
 .customer-doc {
   border: 1px solid var(--line-strong);
   background: var(--surface-doc);
   padding: 18px 18px 22px;
+}
+
+.customer-doc__load {
+  margin-bottom: 18px;
 }
 
 .customer-doc .summary {
@@ -951,20 +1163,31 @@ body {
   border-left-color: var(--green-line);
 }
 
+.history__item--expired {
+  border-left-color: var(--red-line);
+}
+
 .history__sheet {
   font-size: 14px;
   color: var(--ink);
+  margin: 0;
+}
+
+.history__sheet--expired {
+  color: var(--red-deep);
 }
 
 .history__meta {
   font-size: 13.5px;
   color: var(--ink-soft);
+  margin: 2px 0 0;
 }
 
 .history__imprint-line {
   font-size: 13px;
   color: var(--green-deep);
   font-weight: 600;
+  margin: 2px 0 0;
 }
 
 .customer-priority {
@@ -989,14 +1212,18 @@ body {
    RESPONSIVE
    ============================================================ */
 @media (max-width: 960px) {
-  .surface-grid,
   .dispatcher-grid {
     grid-template-columns: 1fr;
   }
+}
 
-  .surface-grid__rail {
-    position: static;
-    grid-template-columns: 1fr;
+@media (max-width: 768px) {
+  .receiver-main {
+    padding: 0 14px;
+  }
+
+  .passport {
+    max-width: 100%;
   }
 }
 

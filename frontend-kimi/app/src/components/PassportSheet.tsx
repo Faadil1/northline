@@ -6,6 +6,9 @@ interface PassportSheetProps {
   statusText: string
   kind: string
   settling?: boolean
+  ready?: boolean
+  accepting?: boolean
+  assigned?: boolean
   children: ReactNode
 }
 
@@ -19,11 +22,17 @@ export function PassportSheet({
   statusText,
   kind,
   settling = false,
+  ready = false,
+  accepting = false,
+  assigned = false,
   children,
 }: PassportSheetProps) {
   const classes = [
     'sheet',
     `sheet--${status}`,
+    ready && status === 'open' ? 'sheet--ready' : '',
+    accepting ? 'sheet--accepting' : '',
+    assigned && status === 'expired' ? 'sheet--assigned' : '',
     settling ? 'sheet--settling' : '',
   ]
     .filter(Boolean)

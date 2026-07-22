@@ -1,4 +1,5 @@
 import { CurrentCustodianSummary } from '@/components/CurrentCustodianSummary'
+import { TransferImprint } from '@/components/TransferImprint'
 import { RECEIVER, SHEET_01, SHIPMENT } from '@/data/shipment'
 import { useCustody } from '@/state/CustodyContext'
 
@@ -14,7 +15,7 @@ export function CustomerPassportMobile() {
 
   return (
     <div className="customer-wrap">
-      <span className="label label--section" style={{ display: 'block', marginBottom: 12 }}>
+      <span className="label label--section customer-passport__title">
         Customer passport — {SHIPMENT.customer}
       </span>
 
@@ -23,7 +24,7 @@ export function CustomerPassportMobile() {
         <CurrentCustodianSummary compact />
 
         {/* 2-3. Load detail + condition (inside summary on desktop; repeated here for mobile priority) */}
-        <div className="summary__load" style={{ marginBottom: 18 }} aria-label="Load details">
+        <div className="summary__load customer-doc__load" aria-label="Load details">
           <span>Load {SHIPMENT.load}</span>
           <span>Seal {SHIPMENT.seal}</span>
           <span>
@@ -32,14 +33,19 @@ export function CustomerPassportMobile() {
           <span>Condition {SHIPMENT.conditionLabel}</span>
         </div>
 
+        {/* Actual Transfer Imprint when locked */}
+        {accepted && (
+          <TransferImprint acceptedAt={state.acceptedAt} settling={false} />
+        )}
+
         {/* 4. Permanent prior sheets */}
         <p className="label history__title">Permanent history</p>
 
         <div className="history__item">
-          <p className="label history__sheet" style={{ margin: 0 }}>
+          <p className="label history__sheet">
             Sheet 01 — Locked
           </p>
-          <p className="history__meta" style={{ margin: '2px 0 0' }}>
+          <p className="history__meta">
             {SHEET_01.custodian}
             <br />
             Accepted by {SHEET_01.acceptedBy}
@@ -48,13 +54,13 @@ export function CustomerPassportMobile() {
 
         {accepted && (
           <div className="history__item history__item--imprint">
-            <p className="label history__sheet" style={{ margin: 0 }}>
+            <p className="label history__sheet">
               Sheet 02 — Locked
             </p>
-            <p className="history__meta" style={{ margin: '2px 0 0' }}>
+            <p className="history__meta">
               {RECEIVER.name}
             </p>
-            <p className="history__imprint-line" style={{ margin: '2px 0 0' }}>
+            <p className="history__imprint-line">
               Transfer Imprint recorded
             </p>
           </div>
@@ -62,21 +68,21 @@ export function CustomerPassportMobile() {
 
         {state.sheet02 === 'open' && (
           <div className="history__item">
-            <p className="label history__sheet" style={{ margin: 0 }}>
+            <p className="label history__sheet">
               Sheet 02 — Open / Incomplete
             </p>
-            <p className="history__meta" style={{ margin: '2px 0 0' }}>
+            <p className="history__meta">
               Awaiting acceptance by {RECEIVER.name}
             </p>
           </div>
         )}
 
         {state.sheet02 === 'expired' && (
-          <div className="history__item" style={{ borderLeftColor: 'var(--red-line)' }}>
-            <p className="label history__sheet" style={{ margin: 0, color: 'var(--red-deep)' }}>
+          <div className="history__item history__item--expired">
+            <p className="label history__sheet history__sheet--expired">
               Sheet 02 — Expired
             </p>
-            <p className="history__meta" style={{ margin: '2px 0 0' }}>
+            <p className="history__meta">
               Handoff not confirmed. Your shipment remains with its current custodian.
             </p>
           </div>
